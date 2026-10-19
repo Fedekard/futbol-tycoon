@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fútbol Tycoon: Mánager de Leyenda</title>
+    <!-- Librerías de Estilo y Conexión en la Nube -->
+    <script src="https://tailwindcss.com"></script>
+    <script src="https://unpkg.com"></script>
+    <script>
+        // 🔑 CONTENEDORES DE LLAVES REALES DE TU SERVIDOR
+        const SUPABASE_URL = "https://unlpmowwabxbfaxycuvs.supabase.co"; 
+        const SUPABASE_KEY = "sb_publishable_n-aBQPi0beHdTu_DxXZKtA_N4djAPMc";
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    </script>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen p-4 flex flex-col items-center">
+
+    <!-- CONTENEDOR PRINCIPAL RESPONSIVO PARA MÓVIL -->
+    <div class="w-full max-w-md space-y-4">
+        
+        <!-- MARCADOR DE CONTROL FINANCIERO -->
+        <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl flex justify-between items-center shadow-2xl">
+            <div>
+                <h1 class="text-md font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 to-amber-400 tracking-wider uppercase">Fútbol Tycoon</h1>
+                <p class="text-[10px] text-slate-400">Estadio: <span id="txt-estadio" class="text-white font-semibold">Por registrar</span></p>
+            </div>
+            <div class="text-right space-y-0.5">
+                <span id="display-billetes" class="text-sm font-mono text-green-400 font-bold block">0 💵</span>
+                <span id="display-monedas" class="text-xs font-mono text-amber-400 font-bold block">0 🪙</span>
+            </div>
+        </div>
+
+        <!-- DIARIO DE A BORDO PRIVADO / FEED -->
+        <div class="bg-slate-900 border border-slate-800 p-3 rounded-xl text-xs space-y-1 shadow-inner">
+            <span class="text-[9px] uppercase font-bold text-slate-500 block font-mono">📢 Muro del Club</span>
+            <p id="feed-sistema" class="text-blue-400 font-medium">👋 Conexión establecida. Introduce tus credenciales para fundar tu entidad.</p>
+        </div>
+
+        <!-- 🚪 INICIO Y REGISTRO GRATUITO -->
+        <div id="pantalla-registro" class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl space-y-3">
+            <div class="border-b border-slate-800 pb-2 text-center">
+                <h2 class="text-xs uppercase font-bold text-yellow-500 font-mono">✍️ Registro de Mánager (Gmail)</h2>
+            </div>
+            <div class="space-y-2">
+                <input type="email" id="reg-email" placeholder="📧 Tu correo de Gmail" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-xs text-white focus:outline-none">
+                <input type="text" id="reg-club" placeholder="🛡️ Nombre de tu Club (ej: Puerto Real F.C.)" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-xs text-white focus:outline-none">
+                <input type="text" id="reg-estadio" placeholder="🏟️ Nombre del Estadio (ej: Coliseo Bahía)" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-xs text-white focus:outline-none">
+                <input type="text" id="reg-torneo" placeholder="🏆 Nombre de tu Torneo de Pretemporada" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-xs text-white focus:outline-none">
+            </div>
+            <button onclick="registrarClubEnServidor()" class="w-full bg-gradient-to-r from-yellow-600 to-amber-500 text-slate-950 font-extrabold py-3 rounded-xl text-xs uppercase tracking-wider active:scale-95 transition shadow">
+                Fundar Club en la Nube
+            </button>
+        </div>
+
+        <!-- MENÚ DE NAVEGACIÓN TÁCTIL (Aparece tras el registro) -->
+        <div id="nav-juego" class="hidden grid grid-cols-4 gap-1 text-[10px] font-bold font-mono text-center">
+            <span onclick="abrirPestaña('tactic')" id="btn-tactic" class="bg-emerald-600 text-slate-950 p-2.5 rounded-xl cursor-pointer border border-emerald-400">⚽ Pizarra</span>
+            <span onclick="abrirPestaña('comercio')" id="btn-comercio" class="bg-slate-900 text-slate-400 p-2.5 rounded-xl cursor-pointer border border-slate-800">🏬 Tiendas</span>
+            <span onclick="abrirPestaña('despacho')" id="btn-despacho" class="bg-slate-900 text-slate-400 p-2.5 rounded-xl cursor-pointer border border-slate-800">🚪 Despacho</span>
+            <span onclick="abrirPestaña('album')" id="btn-album" class="bg-slate-900 text-slate-400 p-2.5 rounded-xl cursor-pointer border border-slate-800">📖 Álbum</span>
+        </div>
+
+        <!-- CONTENEDOR DE PESTAÑAS ACTIVAS -->
+        <div id="pestañas-contenedor" class="hidden space-y-4">
+            
+            <!-- PESTAÑA 1: PIZARRA TÁCTICA -->
+            <div id="pes-tactic" class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl space-y-3">
+                <h3 class="text-xs font-bold text-emerald-400 uppercase font-mono border-b border-slate-800 pb-1.5">⚽ Estrategia y Alineación</h3>
+                <div class="bg-gradient-to-b from-emerald-800 to-green-700 rounded-xl p-4 text-center text-xs space-y-2 relative border border-slate-800">
+                    <p class="font-bold text-white">Marina Ivanova (DC) - 🇺🇦 OVR 66 [EXT]</p>
+                    <p class="text-emerald-100">A. James (MC) - 🇳🇬 OVR 54 [EXT]</p>
+                    <p class="text-emerald-100">S. Mejri (LD) - 🇹🇳 OVR 51 [EXT]</p>
+                    <div class="bg-slate-950/60 p-2 rounded text-[10px] text-slate-300 font-semibold mt-2">Extracomunitarios en Campo: <span class="text-red-400 font-bold">3 / 3</span></div>
+                </div>
+            </div>
+
+            <!-- PESTAÑA 2: TIENDAS Y LOGÍSTICA DE REPOSICIÓN -->
+            <div id="pes-comercio" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl space-y-3">
+                <h3 class="text-xs font-bold text-orange-400 uppercase font-mono border-b border-slate-800 pb-1.5">🏬 Gestión Comercial (Max: 500 uds)</h3>
+                <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2 text-xs">
+                    <div class="flex justify-between items-center">
+                        <span class="font-bold text-white">Perrito Caliente Clásico</span>
+                        <span class="font-mono text-slate-400">200 / 500 uds</span>
+                    </div>
+                    <select class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-xs text-green-400 font-semibold focus:outline-none">
+                        <option>📉 Económico (2.50 💵) [Sugerido Afición]</option>
+                        <option>⚖️ Normal (4.00 💵)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- PESTAÑA 3: DESPACHO CENTRAL Y REUNIONES -->
+            <div id="pes-despacho" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl space-y-3">
+                <h3 class="text-xs font-bold text-yellow-500 uppercase font-mono border-b border-slate-800 pb-1.5">🚪 Puerta de la Oficina</h3>
+                <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-xs space-y-2 relative overflow-hidden">
+                    <div class="absolute left-0 top-0 bottom-0 w-1 bg-blue-500"></div>
+                    <span class="font-bold text-white block">Mateo Fernández (LI - Cantera)</span>
+                    <p class="text-[11px] text-slate-400 italic">"Míster, no tenemos ningún Lateral Izquierdo titular de inicio por el hueco al azar. ¿Mandamos al ojeador?"</p>
+                    <button onclick="alert('✈️ Ojeador enviado por 40.000 Billetes a buscar un lateral.')" class="w-full bg-blue-600 font-bold py-2 rounded-lg text-[10px] text-white uppercase tracking-wider shadow">Contratar Informe a la Carta</button>
+                </div>
+            </div>
+
+            <!-- PESTAÑA 4: ÁLBUM DE CROMOS SÓLIDO -->
+            <div id="pes-album" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl space-y-3">
+                <h3 class="text-xs font-bold text-amber-500 uppercase font-mono border-b border-slate-800 pb-1.5">📖 Colección Abierta</h3>
+                <button onclick="abrirSobreNube()" class="w-full bg-gradient-to-r from-amber-500 to-yellow-400 text-slate-950 font-extrabold py-3 rounded-xl text-xs uppercase tracking-wider shadow active:scale-95 transition">💥 Romper Sobre (Coste: 20 🪙)</button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- SCRIPT DE LOGICA INTELIGENTE CON CONEXIÓN BACK-END -->
+    <script>
+        let managerEmail = "";
+
+        // 🚀 REGISTRO Y CONFIGURACIÓN REAL EN LA NUBE (SUPABASE)
+        async function registrarClubEnServidor() {
+            const email = document.getElementById('reg-email').value;
+            const club = document.getElementById('reg-club').value;
+            const estadio = document.getElementById('reg-estadio').value;
+            const torneo = document.getElementById('reg-torneo').value;
+
+            if(!email || !club || !estadio || !torneo) {
+                alert("Mánager, rellena todos los datos para activar el servidor.");
+                return;
+            }
+
+            managerEmail = email;
+            document.getElementById('feed-sistema').innerText = "⏳ Creando el club y la base de datos en la nube de Supabase...";
+
+            // 1. Guardar o actualizar la fila de la economía del club en la nube
+            const { error: clubError } = await supabase
+                .from('clubes')
+                .upsert({
+                    id_usuario: email,
+                    nombre_club: club,
+                    nombre_estadio: estadio,
+                    nombre_torneo_pretemporada: torneo
+                });
+
+            if (clubError) {
+                alert("Error al conectar con la nube: " + clubError.message);
+                return;
+            }
+
