@@ -4,12 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fútbol Tycoon: Mánager de Leyenda</title>
+    <!-- Librerías de Estilo y Conexión en la Nube -->
+    <script src="https://tailwindcss.com"></script>
+    <script src="https://unpkg.com"></script>
     <style>
-    .hidden { display: none !important; }
+        .hidden { display: none !important; }
     </style>
-        // 🔑 CONTENEDORES DE LLAVES REALES DE TU SERVIDOR
+    <script>
+        // 🔑 CONEXIÓN SELLADA A TU SERVIDOR PROPIO
         const SUPABASE_URL = "https://unlpmowwabxbfaxycuvs.supabase.co"; 
-        const SUPABASE_KEY = "sb_publishable_n-aBQPi0beHdTu_DxXZKtA_N4djAPMc";
+        const SUPABASE_KEY = "sb_publishable_n-aBQPi0beHdT_DxXZktA_N4djAPMc";
         const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     </script>
 </head>
@@ -54,10 +58,10 @@
 
         <!-- MENÚ DE NAVEGACIÓN TÁCTIL (Aparece tras el registro) -->
         <div id="nav-juego" class="hidden grid grid-cols-4 gap-1 text-[10px] font-bold font-mono text-center">
-            <span onclick="abrirPestaña('tactic')" id="btn-tactic" class="bg-emerald-600 text-slate-950 p-2.5 rounded-xl cursor-pointer border border-emerald-400">⚽ Pizarra</span>
-            <span onclick="abrirPestaña('comercio')" id="btn-comercio" class="bg-slate-900 text-slate-400 p-2.5 rounded-xl cursor-pointer border border-slate-800">🏬 Tiendas</span>
-            <span onclick="abrirPestaña('despacho')" id="btn-despacho" class="bg-slate-900 text-slate-400 p-2.5 rounded-xl cursor-pointer border border-slate-800">🚪 Despacho</span>
-            <span onclick="abrirPestaña('album')" id="btn-album" class="bg-slate-900 text-slate-400 p-2.5 rounded-xl cursor-pointer border border-slate-800">📖 Álbum</span>
+            <span onclick="abrirPestaña('tactic')" id="btn-tactic" class="bg-emerald-600 text-slate-950 p-2.5 rounded-xl cursor-pointer border border-emerald-400 font-bold">⚽ Pizarra</span>
+            <span onclick="abrirPestaña('comercio')" id="btn-comercio" class="bg-slate-900 text-slate-400 p-2.5 rounded-xl cursor-pointer border border-slate-800 font-bold">🏬 Tiendas</span>
+            <span onclick="abrirPestaña('despacho')" id="btn-despacho" class="bg-slate-900 text-slate-400 p-2.5 rounded-xl cursor-pointer border border-slate-800 font-bold">🚪 Despacho</span>
+            <span onclick="abrirPestaña('album')" id="btn-album" class="bg-slate-900 text-slate-400 p-2.5 rounded-xl cursor-pointer border border-slate-800 font-bold">📖 Álbum</span>
         </div>
 
         <!-- CONTENEDOR DE PESTAÑAS ACTIVAS -->
@@ -113,7 +117,6 @@
     <script>
         let managerEmail = "";
 
-        // 🚀 REGISTRO Y CONFIGURACIÓN REAL EN LA NUBE (SUPABASE)
         async function registrarClubEnServidor() {
             const email = document.getElementById('reg-email').value;
             const club = document.getElementById('reg-club').value;
@@ -121,14 +124,13 @@
             const torneo = document.getElementById('reg-torneo').value;
 
             if(!email || !club || !estadio || !torneo) {
-                alert("Mánager, rellena todos los datos para activar el servidor.");
+                alert("Mánager, por favor rellena todos los datos para activar el servidor.");
                 return;
             }
 
             managerEmail = email;
             document.getElementById('feed-sistema').innerText = "⏳ Creando el club y la base de datos en la nube de Supabase...";
 
-            // 1. Guardar o actualizar la fila de la economía del club en la nube
             const { error: clubError } = await supabase
                 .from('clubes')
                 .upsert({
